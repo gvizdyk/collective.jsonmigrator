@@ -44,8 +44,8 @@ class CatalogSourceSection(object):
 
         self.remote_skip_paths = self.get_option('remote-skip-paths',
                                                  '').split()
-        self.queue_length = int(self.get_option('queue-size', '10')) 
-         
+        self.queue_length = int(self.get_option('queue-size', '10'))
+
         """
         # Install a basic auth handler
         auth_handler = urllib2.HTTPBasicAuthHandler()
@@ -61,7 +61,7 @@ class CatalogSourceSection(object):
         self.session.auth =(remote_username, remote_password)
         self.session.headers.update({'x-test': 'true'})
         self.item_paths = []
-        
+
         url = '%s%s/get_catalog_results' % (self.remote_url,catalog_path)
         resp = self.session.get(url, params={'catalog_query': catalog_query}, verify=False)
         data = resp.content
@@ -128,7 +128,7 @@ class QueuedItemLoader(threading.Thread):
         self.queue = []
         self.finished = len(paths) == 0
         self.session = session
-        
+
     def __iter__(self):
         while not self.finished or len(self.queue) > 0:
             while len(self.queue) == 0:
@@ -157,7 +157,7 @@ class QueuedItemLoader(threading.Thread):
 
     def _load_path(self, path):
         item_url = '%s%s/get_item' % (self.remote_url, urllib.quote(path))
-   
+
         try:
             #f = urllib2.urlopen(item_url)
             item_json = self.session.get(item_url, verify=False).content #f.read()
@@ -171,4 +171,8 @@ class QueuedItemLoader(threading.Thread):
         except json.JSONDecodeError:
             logger.error("Could not decode item from %s." % item_url)
             return None
+
+        if item.has_key('subject'):
+            item['subjects'] = item['subject']
+
         return item
