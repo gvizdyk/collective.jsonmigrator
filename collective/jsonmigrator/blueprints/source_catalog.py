@@ -175,4 +175,10 @@ class QueuedItemLoader(threading.Thread):
         if item.has_key('subject'):
             item['subjects'] = item['subject']
 
+        if item.has_key('imageCaption'):
+            item['image_caption'] = item['imageCaption']
+
+        if item.has_key('excludeFromNav'):
+            item['exclude_from_nav'] = item['excludeFromNav']
+
         return item
